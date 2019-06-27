@@ -1,23 +1,25 @@
-let actors = ['Tom Cruise', 'Arnold Schwarzenegger', 'Tom Hanks'];
+let topics = ['Tom Cruise', 'Arnold Schwarzenegger', 'Tom Hanks', "Chris Hemsworth"];
 
 
-
+//initial call of the function to render the buttons on screen
 renderButtons();
 
 
+
 function renderButtons() {
-  for (var i = 0; i < actors.length; i++) {
+  $("#buttons-view").empty()
+  for (var i = 0; i < topics.length; i++) {
     var a = $('<button>');
     a.addClass("actor");
-    a.attr("data-name", actors[i]);
-    a.text(actors[i]);
+    a.attr("data-name", topics[i]);
+    a.text(topics[i]);
     $("#buttons-view").append(a);
   }
 }
 
 
 // Function for dumping the JSON content for each button into the div
-function displayMovieInfo() {
+function displayActorInfo() {
 
   var actor = $(this).attr("data-name");
   var queryURL = `https://api.giphy.com/v1/gifs/search?q=${
@@ -28,24 +30,49 @@ function displayMovieInfo() {
     url: queryURL,
     method: "GET"
   }).then(function (response) {
+    $('#movies-view').empty();
 
     var actors = response.data
+    //for each of the JSON data
     actors.forEach(actor => {
+      //grab the images.fixed_height.url
       var imgURL = actor.images.fixed_height.url;
-
+      //grab the rating
+      var rating = actor.rating;
+      // Creating an element to have the rating displayed
+      var pOne = $("<p>").text("Rating: " + rating);
       //create a new div
       var giphyDiv = $("<div class='giphy'>");
-
+      //append the p element to the giphyDiv
+      giphyDiv.append(pOne);
       //create an image tag and define the src
       var image = $('<img>').attr('src', imgURL);
-
       //append the image to the div
       giphyDiv.append(image);
-
       //append the div to the image in the div
       $('#movies-view').prepend(giphyDiv);
     });
   })
 }
 
-$(document).on("click", ".actor", displayMovieInfo);
+// This function handles events where one button is clicked
+$("#add-actor").on("click", function (event) {
+  event.preventDefault();
+  // This line grabs the input from the textbox
+  var actor = $("#actor-input").val().trim();
+  //If there are text in thhe textbox then push it to the topics array
+  if (actor) {
+    topics.push(actor);
+    console.log(topics);
+  }
+  //empty the value in the text-box
+  $('#actor-input').val(" ");
+
+  //call the function to re-render the buttons in the screen after the update
+  renderButtons();
+
+});
+
+// Function for displaying the actors info
+// Using $(document).on instead of $(".actor").on to add event listeners to dynamically generated elements
+$(document).on("click", ".actor", displayActorInfo);
