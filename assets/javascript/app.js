@@ -10,7 +10,7 @@ function renderButtons() {
   $("#buttons-view").empty()
   for (var i = 0; i < topics.length; i++) {
     var a = $('<button>');
-    a.addClass("actor");
+    a.addClass("actor btn btn-info");
     a.attr("data-name", topics[i]);
     a.text(topics[i]);
     $("#buttons-view").append(a);
@@ -30,13 +30,15 @@ function displayActorInfo() {
     url: queryURL,
     method: "GET"
   }).then(function (response) {
-    $('#movies-view').empty();
+    $('#actors-view').empty();
+
+    console.log(response)
 
     var actors = response.data
     //for each of the JSON data
     actors.forEach(actor => {
       //grab the images.fixed_height.url
-      var imgURL = actor.images.fixed_height.url;
+      var imgURL = actor.images.downsized.url;
       //grab the rating
       var rating = actor.rating;
       // Creating an element to have the rating displayed
@@ -50,7 +52,7 @@ function displayActorInfo() {
       //append the image to the div
       giphyDiv.append(image);
       //append the div to the image in the div
-      $('#movies-view').prepend(giphyDiv);
+      $('#actors-view').prepend(giphyDiv);
     });
   })
 }
