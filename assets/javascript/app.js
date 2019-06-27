@@ -1,4 +1,4 @@
-let topics = ['Tom Cruise', 'Arnold Schwarzenegger', 'Tom Hanks', "Chris Hemsworth"];
+let topics = ['Tom Cruise', 'Arnold Schwarzenegger', 'Tom Hanks', "Chris Hemsworth", "Chris Pratt", "Dwayne Johnson", "Will Smith", "Vin Diesel"];
 
 
 //initial call of the function to render the buttons on screen
