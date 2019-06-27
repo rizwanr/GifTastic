@@ -13,4 +13,9 @@ img {
 
 p {
   margin: 0px 0px 2px 5px;
+  color: aliceblue;
+}
+
+body {
+  background-color: #160f24;
 }
