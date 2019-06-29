@@ -4,7 +4,7 @@
 img {
   width: 300px;
   height: 200px;
-  padding: 5px;
+  padding: 10px;
 }
 
 .giphy {
@@ -13,9 +13,16 @@ img {
 
 p {
   margin: 0px 0px 2px 5px;
-  color: aliceblue;
+  color: white;
+  width: 300px;
+  font-size: 10px;
 }
 
 body {
   background-color: #160f24;
+}
+
+.giphyDetails {
+  width: 500px;
+  height: 500px;
 }

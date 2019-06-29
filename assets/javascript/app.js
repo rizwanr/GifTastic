@@ -37,26 +37,35 @@ function ajaxCall(queryURL) {
     //for each of the JSON data
     actors.forEach(actor => {
       //grab the images.fixed_height.url
-      imgURL = actor.images.downsized.url;
+
+      //grab the images.fixed_height.url
+      var imgURL = actor.images.downsized.url;
       //grab the rating
-      rating = actor.rating;
+      var rating = actor.rating;
+      var title = actor.title;
 
       // Creating an element to have the rating displayed
-      pOne = $('<p>').text('Rating: ' + rating);
+      pRating = $('<p>').text('Rating: ' + rating);
+      pTitle = $('<p>').text('Title: ' + title.substring(0, 40));
+
       //create a new div
       giphyDiv = $("<div class='giphy'>");
+      giphyDetails = $("<div class='giphy-details'>");
       //append the p element to the giphyDiv
-      giphyDiv.append(pOne);
+      giphyDiv.append(pRating, pTitle);
       //create an image tag and define the src
       image = $('<img>').attr('src', imgURL);
       //append the image to the div
       giphyDiv.prepend(image);
+      giphyDetails.append(giphyDiv);
 
       //append the div to the image in the div
-      $('#actors-view').prepend(giphyDiv);
+      $('#actors-view').prepend(giphyDetails);
     });
   });
 }
+
+//List additional metadata (title, tags, etc) for each gif in a clean and readable format.
 
 // Function for dumping the JSON content for each button into the div
 function displayActorInfo() {
