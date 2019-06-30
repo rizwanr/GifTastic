@@ -13,7 +13,8 @@ let topics = [
 ];
 
 var imd = '';
-var count = ''
+var count = '';
+var lastActorButtonCLicked =''
 
 //initial call of the function to render the buttons on screen
 renderButtons();
@@ -24,6 +25,7 @@ function renderButtons() {
     var a = $('<button>');
     a.addClass('actor btn btn-info');
     a.attr('data-name', topics[i]);
+    a.attr('id',topics[i]);
     a.text(topics[i]);
     $('#buttons-view').append(a);
   }
@@ -33,14 +35,12 @@ function ajaxCall(queryURL, imd) {
   $.ajax({
     url: queryURL,
     method: 'GET'
-  }).then(function (response) {
-    console.log(response)
-
-
+  }).then(function(response) {
+    console.log(response);
 
     var actors = response.data;
     if (imd) {
-      $('#actors-view').empty()
+      $('#actors-view').empty();
     }
 
     //for each of the JSON data
@@ -68,9 +68,7 @@ function ajaxCall(queryURL, imd) {
       giphyDiv.prepend(image);
       giphyDetails.append(giphyDiv);
 
-      count = ($('.giphy').length);
-
-
+      count = $('.giphy').length;
 
       //append the div to the image in the div
       $('#actors-view').prepend(giphyDetails);
@@ -88,27 +86,25 @@ function ajaxCall(queryURL, imd) {
 // Function for dumping the JSON content for each button into the div
 function displayActorInfo() {
   var actor = $(this).attr('data-name');
-  console.log(actor)
 
+  console.log(actor);
+  console.log(lastActorButtonCLicked)
 
-
-
-  if ($('#actors-view').is(':empty')) {
-
+  if ($('#actors-view').is(':empty') || actor !== lastActorButtonCLicked) {
     var queryURL = `https://api.giphy.com/v1/gifs/search?q=${actor}&api_key=BkaUZZWcFij6J7AoQj3WtPb1R2p9O6V9`;
-    imd = true
+
+    imd = true;
 
     ajaxCall(queryURL, imd);
-  } else if (count === 24) {
+  } else {
     var queryURL = `https://api.giphy.com/v1/gifs/search?q=${actor}&api_key=BkaUZZWcFij6J7AoQj3WtPb1R2p9O6V9&limit=10`;
-    imd = false
+    imd = false;
     ajaxCall(queryURL, imd);
   }
-
 }
 
 // This function handles events where one button is clicked
-$('#add-actor').on('click', function (event) {
+$('#add-actor').on('click', function(event) {
   event.preventDefault();
   // This line grabs the input from the textbox
   var actor = $('#actor-input')
@@ -117,13 +113,29 @@ $('#add-actor').on('click', function (event) {
   //If there are text in thhe textbox then push it to the topics array
   if (actor) {
     topics.push(actor);
-    console.log(topics);
   }
   //empty the value in the text-box
   $('#actor-input').val(' ');
 
   //call the function to re-render the buttons in the screen after the update
   renderButtons();
+});
+
+$(document).ready(function() {
+   $('button').click(function() {
+    if (
+      $(this)
+        .parent()
+        .data('lastClicked')
+    ) {
+      lastActorButtonCLicked= $(this)
+        .parent()
+        .data('lastClicked');
+    }
+    $(this)
+      .parent()
+      .data('lastClicked', this.id);
+  });
 });
 
 // Function for displaying the actors info
