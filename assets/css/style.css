@@ -26,3 +26,8 @@ body {
   width: 500px;
   height: 500px;
 }
+
+.favourites-section {
+  background: aqua;
+  width: 400px;
+}

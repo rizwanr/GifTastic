@@ -12,6 +12,9 @@ let topics = [
   'Hrithik Roshan'
 ];
 
+var imd = '';
+var count = ''
+
 //initial call of the function to render the buttons on screen
 renderButtons();
 
@@ -26,14 +29,20 @@ function renderButtons() {
   }
 }
 
-function ajaxCall(queryURL) {
+function ajaxCall(queryURL, imd) {
   $.ajax({
     url: queryURL,
     method: 'GET'
-  }).then(function(response) {
-    console.log(response);
+  }).then(function (response) {
+    console.log(response)
+
+
 
     var actors = response.data;
+    if (imd) {
+      $('#actors-view').empty()
+    }
+
     //for each of the JSON data
     actors.forEach(actor => {
       //grab the images.fixed_height.url
@@ -59,30 +68,47 @@ function ajaxCall(queryURL) {
       giphyDiv.prepend(image);
       giphyDetails.append(giphyDiv);
 
+      count = ($('.giphy').length);
+
+
+
       //append the div to the image in the div
       $('#actors-view').prepend(giphyDetails);
     });
   });
 }
 
+// var previousActorButtonClicked = $("button").click(function (e) {
+//   console.log(e.target.dataset.name)
+
+// });
+
 //List additional metadata (title, tags, etc) for each gif in a clean and readable format.
 
 // Function for dumping the JSON content for each button into the div
 function displayActorInfo() {
   var actor = $(this).attr('data-name');
+  console.log(actor)
+
+
+
+
   if ($('#actors-view').is(':empty')) {
+
     var queryURL = `https://api.giphy.com/v1/gifs/search?q=${actor}&api_key=BkaUZZWcFij6J7AoQj3WtPb1R2p9O6V9`;
+    imd = true
 
-    ajaxCall(queryURL);
-  } else {
+    ajaxCall(queryURL, imd);
+  } else if (count === 24) {
     var queryURL = `https://api.giphy.com/v1/gifs/search?q=${actor}&api_key=BkaUZZWcFij6J7AoQj3WtPb1R2p9O6V9&limit=10`;
-
-    ajaxCall(queryURL);
+    imd = false
+    ajaxCall(queryURL, imd);
   }
+
 }
 
 // This function handles events where one button is clicked
-$('#add-actor').on('click', function(event) {
+$('#add-actor').on('click', function (event) {
   event.preventDefault();
   // This line grabs the input from the textbox
   var actor = $('#actor-input')
