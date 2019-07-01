@@ -1,32 +1,35 @@
-let topics = [
-  'Tom Cruise',
-  'Arnold Schwarzenegger',
-  'Tom Hanks',
-  'Chris Hemsworth',
-  'Chris Pratt',
-  'Dwayne Johnson',
-  'Will Smith',
-  'Vin Diesel',
-  'Pamela Anderson',
-  'Shahrukh khan',
-  'Hrithik Roshan'
+let actors = [
+  'Toy Story',
+  'The Incredibles',
+  'Ratatouille',
+  'Spirited Away',
+  'Finding Nemo',
+  'How to Train your Dragon',
+  'The Lego Movie',
+  'Shrek',
+  'Beauty and the Beast',
+  'Cinderella',
+  'Snow White'
 ];
+
+let favGiphys = [];
 
 var imd = '';
 var count = '';
-var lastActorButtonCLicked =''
+var lastActorButtonCLicked = '';
+var storedMovies = '';
 
 //initial call of the function to render the buttons on screen
 renderButtons();
 
 function renderButtons() {
   $('#buttons-view').empty();
-  for (var i = 0; i < topics.length; i++) {
+  for (var i = 0; i < actors.length; i++) {
     var a = $('<button>');
     a.addClass('actor btn btn-info');
-    a.attr('data-name', topics[i]);
-    a.attr('id',topics[i]);
-    a.text(topics[i]);
+    a.attr('data-name', actors[i]);
+    a.attr('id', actors[i]);
+    a.text(actors[i]);
     $('#buttons-view').append(a);
   }
 }
@@ -60,15 +63,21 @@ function ajaxCall(queryURL, imd) {
       //create a new div
       giphyDiv = $("<div class='giphy'>");
       giphyDetails = $("<div class='giphy-details'>");
+
+      var gifFavourite = $('<button class="fav-gif">');
+      gifFavourite.addClass('btn btn-light btn-sm');
+      gifFavourite.append('<i class="fa fa-heart-o"></i>');
+      gifFavourite.attr({
+        'giphy-id': actor.id
+      });
       //append the p element to the giphyDiv
-      giphyDiv.append(pRating, pTitle);
+      giphyDiv.append(pRating, pTitle, gifFavourite);
       //create an image tag and define the src
       image = $('<img>').attr('src', imgURL);
+      image.attr('class', 'img');
       //append the image to the div
       giphyDiv.prepend(image);
       giphyDetails.append(giphyDiv);
-
-      count = $('.giphy').length;
 
       //append the div to the image in the div
       $('#actors-view').prepend(giphyDetails);
@@ -76,19 +85,43 @@ function ajaxCall(queryURL, imd) {
   });
 }
 
-// var previousActorButtonClicked = $("button").click(function (e) {
-//   console.log(e.target.dataset.name)
+function displayMoviesInfo() {
+  $('.actor').on('click', function() {
+    var movie = $(this).attr('data-name');
 
-// });
+    var queryURL = `https://api.themoviedb.org/3/search/movie?api_key=ef99ccdee28605c6430d12d9af5feea6&language=en-US&query=${movie}&page=1&include_adult=false`;
 
-//List additional metadata (title, tags, etc) for each gif in a clean and readable format.
+    $('#movies-view').empty();
 
-// Function for dumping the JSON content for each button into the div
+    $.ajax({
+      url: queryURL,
+      method: 'GET'
+    }).then(function(response) {
+      console.log(response);
+
+      var result = response.results[0];
+
+      var title = result.title;
+      var overview = result.overview;
+      var poster = `http://image.tmdb.org/t/p/w185/${result.poster_path}`;
+      var realeaseDate = result.release_date;
+
+      movieDiv = $("<div class ='movie'>");
+      movieDetails = $("<div class ='movie-details'>");
+      pTitle = $('<p>').text('Title: ' + title);
+      pOverview = $('<p>').text('Overview: ' + overview);
+      pReleaseDate = $('<p>').text('Release: ' + realeaseDate);
+      Poster = $('<img>').attr('src', poster);
+      movieDetails.append(pTitle, pOverview, pReleaseDate);
+      movieDiv.append(Poster);
+      movieDiv.append(movieDetails);
+      $('#movies-view').append(movieDiv);
+    });
+  });
+}
+
 function displayActorInfo() {
   var actor = $(this).attr('data-name');
-
-  console.log(actor);
-  console.log(lastActorButtonCLicked)
 
   if ($('#actors-view').is(':empty') || actor !== lastActorButtonCLicked) {
     var queryURL = `https://api.giphy.com/v1/gifs/search?q=${actor}&api_key=BkaUZZWcFij6J7AoQj3WtPb1R2p9O6V9`;
@@ -122,13 +155,13 @@ $('#add-actor').on('click', function(event) {
 });
 
 $(document).ready(function() {
-   $('button').click(function() {
+  $('button').click(function() {
     if (
       $(this)
         .parent()
         .data('lastClicked')
     ) {
-      lastActorButtonCLicked= $(this)
+      lastActorButtonCLicked = $(this)
         .parent()
         .data('lastClicked');
     }
@@ -137,6 +170,86 @@ $(document).ready(function() {
       .data('lastClicked', this.id);
   });
 });
+
+//localStorage
+
+// function saveFavouriteGiphytoLocalStorage() {
+//   //get any giphy stored in localStorage
+//   const favGiphyJSON = localStorage.getItem('favGiphy');
+
+//   // if giphy exist, then parse the giphyJSON
+//   if (favGiphyJSON !== null) {
+//     favGiphy = JSON.parse(favGiphyJSON)
+//   }
+
+//   $('.fav-gif').on('click', function () {
+//     favGiphys.push({
+//       Rating: 'rizwan',
+//       Title: 'rere',
+//       src:''
+//     })
+//     localStorage.setItem('favGiphy', JSON.stringify(favGiphys))
+//   })
+
+// }
+//
+
+function favouriteGiphy() {
+  $(document).on('click', '.fav-gif', function() {
+    $('.favourites-section').empty();
+
+    var giphyId = $(this).attr('giphy-id');
+
+    if (favGiphys.indexOf(giphyId) === -1) {
+      favGiphys.push(giphyId);
+    }
+
+    console.log(favGiphys);
+
+    for (var i = 0; i <= favGiphys.length; i++) {
+      var queryURL = `https://api.giphy.com/v1/gifs/${
+        favGiphys[i]
+      }?api_key=BkaUZZWcFij6J7AoQj3WtPb1R2p9O6V9`;
+
+      $.ajax({
+        url: queryURL,
+        method: 'GET'
+      }).then(function(response) {
+        var favouriteActors = response.data;
+        console.log(favouriteActors);
+
+        var result = response.data;
+
+        var favGifDiv = $(
+          "<div class='card float-left fav-gif-card my-3 mx-3'>"
+        );
+        var favGifRating = $("<small class='text-center'>").text(
+          'Rating: ' + result.rating
+        );
+        var favGifImg = $('<img>');
+        favGifImg.attr({
+          src: result.images.fixed_height_small_still.url,
+          'data-still': result.images.fixed_height_small_still.url,
+          'data-animated': result.images.fixed_height_small.url,
+          'data-state': 'still',
+          class: 'gif',
+          'giphy-id': result.id
+        });
+
+        favGifDiv.append(favGifImg);
+        favGifDiv.append('<br>');
+        favGifDiv.append(favGifRating);
+        favGifDiv.append('<br>');
+
+        $('.favourites-section').prepend(favGifDiv);
+      });
+    }
+  });
+}
+
+displayMoviesInfo();
+
+favouriteGiphy();
 
 // Function for displaying the actors info
 // Using $(document).on instead of $(".actor").on to add event listeners to dynamically generated elements
