@@ -17,7 +17,55 @@ let favGiphys = [];
 var imd = '';
 var count = '';
 var lastActorButtonCLicked = '';
-var storedMovies = '';
+
+$(document).ready(function() {
+  const favGiphyJSON = localStorage.getItem('favGiphys');
+  if (favGiphyJSON !== null) {
+    favGiphy = JSON.parse(favGiphyJSON);
+    console.log(favGiphy);
+  }
+
+  if (favGiphyJSON) {
+    for (var i = 0; i <= favGiphy.length; i++) {
+      var queryURL = `https://api.giphy.com/v1/gifs/${
+        favGiphy[i]
+      }?api_key=BkaUZZWcFij6J7AoQj3WtPb1R2p9O6V9`;
+
+      $.ajax({
+        url: queryURL,
+        method: 'GET'
+      }).then(function(response) {
+        var favouriteActors = response.data;
+        console.log(favouriteActors);
+
+        var result = response.data;
+
+        var favGifDiv = $(
+          "<div class='card float-left fav-gif-card my-3 mx-3'>"
+        );
+        var favGifRating = $("<small class='text-center'>").text(
+          'Rating: ' + result.rating
+        );
+        var favGifImg = $('<img>');
+        favGifImg.attr({
+          src: result.images.fixed_height_small_still.url,
+          'data-still': result.images.fixed_height_small_still.url,
+          'data-animated': result.images.fixed_height_small.url,
+          'data-state': 'still',
+          class: 'gif',
+          'giphy-id': result.id
+        });
+
+        favGifDiv.append(favGifImg);
+        favGifDiv.append('<br>');
+        favGifDiv.append(favGifRating);
+        favGifDiv.append('<br>');
+
+        $('.favourites-section').prepend(favGifDiv);
+      });
+    }
+  }
+});
 
 //initial call of the function to render the buttons on screen
 renderButtons();
@@ -203,6 +251,8 @@ function favouriteGiphy() {
     if (favGiphys.indexOf(giphyId) === -1) {
       favGiphys.push(giphyId);
     }
+
+    console.log(localStorage.setItem('favGiphys', JSON.stringify(favGiphys)));
 
     console.log(favGiphys);
 
