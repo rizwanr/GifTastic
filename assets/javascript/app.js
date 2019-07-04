@@ -124,14 +124,8 @@ function giphyAjaxCall(queryURL, imd) {
       gifFavourite.attr({
         'giphy-id': actor.id
       });
-      //append the p element to the giphyDiv
+
       giphyDiv.append(pRating, pTitle, gifFavourite);
-      //create an image tag and define the src
-      //image = $('<img>').attr('src', imgURL);
-      //image.attr('class', 'img');
-      //append the image to the div
-
-
       var image = $('<img>');
       image.attr({
         src: actor.images.original_still.url,
