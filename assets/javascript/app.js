@@ -18,7 +18,7 @@ var imd = '';
 var count = '';
 var lastActorButtonCLicked = '';
 
-$(document).ready(function() {
+$(document).ready(function () {
   const favGiphyJSON = localStorage.getItem('favGiphys');
   if (favGiphyJSON !== null) {
     favGiphy = JSON.parse(favGiphyJSON);
@@ -34,7 +34,7 @@ $(document).ready(function() {
       $.ajax({
         url: queryURL,
         method: 'GET'
-      }).then(function(response) {
+      }).then(function (response) {
         var favouriteActors = response.data;
         console.log(favouriteActors);
 
@@ -48,9 +48,9 @@ $(document).ready(function() {
         );
         var favGifImg = $('<img>');
         favGifImg.attr({
-          src: result.images.fixed_height_small_still.url,
-          'data-still': result.images.fixed_height_small_still.url,
-          'data-animated': result.images.fixed_height_small.url,
+          src: result.images.original_still.url,
+          'data-still': result.images.original_still.url,
+          'data-animated': result.images.original.url,
           'data-state': 'still',
           class: 'gif',
           'giphy-id': result.id
@@ -68,7 +68,7 @@ $(document).ready(function() {
 });
 
 //initial call of the function to render the buttons on screen
-renderButtons();
+
 
 function renderButtons() {
   $('#buttons-view').empty();
@@ -82,11 +82,11 @@ function renderButtons() {
   }
 }
 
-function ajaxCall(queryURL, imd) {
+function giphyAjaxCall(queryURL, imd) {
   $.ajax({
     url: queryURL,
     method: 'GET'
-  }).then(function(response) {
+  }).then(function (response) {
     console.log(response);
 
     var actors = response.data;
@@ -121,9 +121,20 @@ function ajaxCall(queryURL, imd) {
       //append the p element to the giphyDiv
       giphyDiv.append(pRating, pTitle, gifFavourite);
       //create an image tag and define the src
-      image = $('<img>').attr('src', imgURL);
-      image.attr('class', 'img');
+      //image = $('<img>').attr('src', imgURL);
+      //image.attr('class', 'img');
       //append the image to the div
+
+
+      var image = $('<img>');
+      image.attr({
+        src: actor.images.original_still.url,
+        'data-still': actor.images.original_still.url,
+        'data-animated': actor.images.original.url,
+        'data-state': 'still',
+        class: 'gif',
+        'giphy-id': actor.id
+      });
       giphyDiv.prepend(image);
       giphyDetails.append(giphyDiv);
 
@@ -134,7 +145,7 @@ function ajaxCall(queryURL, imd) {
 }
 
 function displayMoviesInfo() {
-  $('.actor').on('click', function() {
+  $('.actor').on('click', function () {
     var movie = $(this).attr('data-name');
 
     var queryURL = `https://api.themoviedb.org/3/search/movie?api_key=ef99ccdee28605c6430d12d9af5feea6&language=en-US&query=${movie}&page=1&include_adult=false`;
@@ -144,7 +155,7 @@ function displayMoviesInfo() {
     $.ajax({
       url: queryURL,
       method: 'GET'
-    }).then(function(response) {
+    }).then(function (response) {
       console.log(response);
 
       var result = response.results[0];
@@ -168,7 +179,7 @@ function displayMoviesInfo() {
   });
 }
 
-function displayActorInfo() {
+function displayGiphyInfo() {
   var actor = $(this).attr('data-name');
 
   if ($('#actors-view').is(':empty') || actor !== lastActorButtonCLicked) {
@@ -176,16 +187,16 @@ function displayActorInfo() {
 
     imd = true;
 
-    ajaxCall(queryURL, imd);
+    giphyAjaxCall(queryURL, imd);
   } else {
     var queryURL = `https://api.giphy.com/v1/gifs/search?q=${actor}&api_key=BkaUZZWcFij6J7AoQj3WtPb1R2p9O6V9&limit=10`;
     imd = false;
-    ajaxCall(queryURL, imd);
+    giphyAjaxCall(queryURL, imd);
   }
 }
 
 // This function handles events where one button is clicked
-$('#add-actor').on('click', function(event) {
+$('#add-actor').on('click', function (event) {
   event.preventDefault();
   // This line grabs the input from the textbox
   var actor = $('#actor-input')
@@ -202,12 +213,12 @@ $('#add-actor').on('click', function(event) {
   renderButtons();
 });
 
-$(document).ready(function() {
-  $('button').click(function() {
+$(document).ready(function () {
+  $('button').click(function () {
     if (
       $(this)
-        .parent()
-        .data('lastClicked')
+      .parent()
+      .data('lastClicked')
     ) {
       lastActorButtonCLicked = $(this)
         .parent()
@@ -243,7 +254,7 @@ $(document).ready(function() {
 //
 
 function favouriteGiphy() {
-  $(document).on('click', '.fav-gif', function() {
+  $(document).on('click', '.fav-gif', function () {
     $('.favourites-section').empty();
 
     var giphyId = $(this).attr('giphy-id');
@@ -264,7 +275,7 @@ function favouriteGiphy() {
       $.ajax({
         url: queryURL,
         method: 'GET'
-      }).then(function(response) {
+      }).then(function (response) {
         var favouriteActors = response.data;
         console.log(favouriteActors);
 
@@ -278,9 +289,9 @@ function favouriteGiphy() {
         );
         var favGifImg = $('<img>');
         favGifImg.attr({
-          src: result.images.fixed_height_small_still.url,
-          'data-still': result.images.fixed_height_small_still.url,
-          'data-animated': result.images.fixed_height_small.url,
+          src: result.images.original_still.url,
+          'data-still': result.images.original_still.url,
+          'data-animated': result.images.original.url,
           'data-state': 'still',
           class: 'gif',
           'giphy-id': result.id
@@ -297,10 +308,25 @@ function favouriteGiphy() {
   });
 }
 
-displayMoviesInfo();
+function changeState() {
+  var state = $(this).attr("data-state");
+  var animateImage = $(this).attr("data-animated");
+  var stillImage = $(this).attr("data-still");
 
+  if (state == "still") {
+    $(this).attr("src", animateImage);
+    $(this).attr("data-state", "animate");
+  } else if (state == "animate") {
+    $(this).attr("src", stillImage);
+    $(this).attr("data-state", "still");
+  }
+}
+
+renderButtons();
+displayMoviesInfo();
 favouriteGiphy();
 
 // Function for displaying the actors info
 // Using $(document).on instead of $(".actor").on to add event listeners to dynamically generated elements
-$(document).on('click', '.actor', displayActorInfo);
+$(document).on('click', '.actor', displayGiphyInfo)
+$(document).on("click", ".gif", changeState);
