@@ -18,7 +18,7 @@ var imd = '';
 var count = '';
 var lastActorButtonCLicked = '';
 
-$(document).ready(function () {
+function storedFavouriteGiphys() {
   const favGiphyJSON = localStorage.getItem('favGiphys');
   if (favGiphyJSON !== null) {
     favGiphy = JSON.parse(favGiphyJSON);
@@ -30,42 +30,48 @@ $(document).ready(function () {
       var queryURL = `https://api.giphy.com/v1/gifs/${
         favGiphy[i]
       }?api_key=BkaUZZWcFij6J7AoQj3WtPb1R2p9O6V9`;
+      favAjaxCall(queryURL)
 
-      $.ajax({
-        url: queryURL,
-        method: 'GET'
-      }).then(function (response) {
-        var favouriteActors = response.data;
-        console.log(favouriteActors);
-
-        var result = response.data;
-
-        var favGifDiv = $(
-          "<div class='card float-left fav-gif-card my-3 mx-3'>"
-        );
-        var favGifRating = $("<small class='text-center'>").text(
-          'Rating: ' + result.rating
-        );
-        var favGifImg = $('<img>');
-        favGifImg.attr({
-          src: result.images.original_still.url,
-          'data-still': result.images.original_still.url,
-          'data-animated': result.images.original.url,
-          'data-state': 'still',
-          class: 'gif',
-          'giphy-id': result.id
-        });
-
-        favGifDiv.append(favGifImg);
-        favGifDiv.append('<br>');
-        favGifDiv.append(favGifRating);
-        favGifDiv.append('<br>');
-
-        $('.favourites-section').prepend(favGifDiv);
-      });
     }
   }
-});
+};
+
+function favAjaxCall(queryURL) {
+
+  $.ajax({
+    url: queryURL,
+    method: 'GET'
+  }).then(function (response) {
+    var favouriteActors = response.data;
+    console.log(favouriteActors);
+
+    var result = response.data;
+
+    var favGifDiv = $(
+      "<div class='card float-left fav-gif-card my-3 mx-3'>"
+    );
+    var favGifRating = $("<small class='text-center'>").text(
+      'Rating: ' + result.rating
+    );
+    var favGifImg = $('<img>');
+    favGifImg.attr({
+      src: result.images.original_still.url,
+      'data-still': result.images.original_still.url,
+      'data-animated': result.images.original.url,
+      'data-state': 'still',
+      class: 'gif',
+      'giphy-id': result.id
+    });
+
+    favGifDiv.append(favGifImg);
+    favGifDiv.append('<br>');
+    favGifDiv.append(favGifRating);
+    favGifDiv.append('<br>');
+
+    $('.favourites-section').prepend(favGifDiv);
+  });
+
+}
 
 //initial call of the function to render the buttons on screen
 
@@ -148,35 +154,41 @@ function displayMoviesInfo() {
   $('.actor').on('click', function () {
     var movie = $(this).attr('data-name');
 
-    var queryURL = `https://api.themoviedb.org/3/search/movie?api_key=ef99ccdee28605c6430d12d9af5feea6&language=en-US&query=${movie}&page=1&include_adult=false`;
+    var queryURL = `https://api.themoviedb.org/3/search/movie?api_key=ef99ccdee28605c6430d12d9af5feea6&language=en-US&query=${movie}&page=1&include_adult=false&limit=1`;
 
     $('#movies-view').empty();
+    ajavMovieCall(queryURL)
 
-    $.ajax({
-      url: queryURL,
-      method: 'GET'
-    }).then(function (response) {
-      console.log(response);
-
-      var result = response.results[0];
-
-      var title = result.title;
-      var overview = result.overview;
-      var poster = `http://image.tmdb.org/t/p/w185/${result.poster_path}`;
-      var realeaseDate = result.release_date;
-
-      movieDiv = $("<div class ='movie'>");
-      movieDetails = $("<div class ='movie-details'>");
-      pTitle = $('<p>').text('Title: ' + title);
-      pOverview = $('<p>').text('Overview: ' + overview);
-      pReleaseDate = $('<p>').text('Release: ' + realeaseDate);
-      Poster = $('<img>').attr('src', poster);
-      movieDetails.append(pTitle, pOverview, pReleaseDate);
-      movieDiv.append(Poster);
-      movieDiv.append(movieDetails);
-      $('#movies-view').append(movieDiv);
-    });
   });
+}
+
+function ajavMovieCall(queryURL) {
+
+  $.ajax({
+    url: queryURL,
+    method: 'GET'
+  }).then(function (response) {
+    console.log(response);
+
+    var result = response.results[0];
+
+    var title = result.title;
+    var overview = result.overview;
+    var poster = `http://image.tmdb.org/t/p/w185/${result.poster_path}`;
+    var realeaseDate = result.release_date;
+
+    movieDiv = $("<div class ='movie'>");
+    movieDetails = $("<div class ='movie-details'>");
+    pTitle = $('<p>').text('Title: ' + title);
+    pOverview = $('<p>').text('Overview: ' + overview);
+    pReleaseDate = $('<p>').text('Release: ' + realeaseDate);
+    Poster = $('<img>').attr('src', poster);
+    movieDetails.append(pTitle, pOverview, pReleaseDate);
+    movieDiv.append(Poster);
+    movieDiv.append(movieDetails);
+    $('#movies-view').append(movieDiv);
+  });
+
 }
 
 function displayGiphyInfo() {
@@ -230,80 +242,24 @@ $(document).ready(function () {
   });
 });
 
-//localStorage
 
-// function saveFavouriteGiphytoLocalStorage() {
-//   //get any giphy stored in localStorage
-//   const favGiphyJSON = localStorage.getItem('favGiphy');
-
-//   // if giphy exist, then parse the giphyJSON
-//   if (favGiphyJSON !== null) {
-//     favGiphy = JSON.parse(favGiphyJSON)
-//   }
-
-//   $('.fav-gif').on('click', function () {
-//     favGiphys.push({
-//       Rating: 'rizwan',
-//       Title: 'rere',
-//       src:''
-//     })
-//     localStorage.setItem('favGiphy', JSON.stringify(favGiphys))
-//   })
-
-// }
-//
 
 function favouriteGiphy() {
   $(document).on('click', '.fav-gif', function () {
     $('.favourites-section').empty();
+
 
     var giphyId = $(this).attr('giphy-id');
 
     if (favGiphys.indexOf(giphyId) === -1) {
       favGiphys.push(giphyId);
     }
-
-    console.log(localStorage.setItem('favGiphys', JSON.stringify(favGiphys)));
-
-    console.log(favGiphys);
-
     for (var i = 0; i <= favGiphys.length; i++) {
       var queryURL = `https://api.giphy.com/v1/gifs/${
         favGiphys[i]
       }?api_key=BkaUZZWcFij6J7AoQj3WtPb1R2p9O6V9`;
 
-      $.ajax({
-        url: queryURL,
-        method: 'GET'
-      }).then(function (response) {
-        var favouriteActors = response.data;
-        console.log(favouriteActors);
-
-        var result = response.data;
-
-        var favGifDiv = $(
-          "<div class='card float-left fav-gif-card my-3 mx-3'>"
-        );
-        var favGifRating = $("<small class='text-center'>").text(
-          'Rating: ' + result.rating
-        );
-        var favGifImg = $('<img>');
-        favGifImg.attr({
-          src: result.images.original_still.url,
-          'data-still': result.images.original_still.url,
-          'data-animated': result.images.original.url,
-          'data-state': 'still',
-          class: 'gif',
-          'giphy-id': result.id
-        });
-
-        favGifDiv.append(favGifImg);
-        favGifDiv.append('<br>');
-        favGifDiv.append(favGifRating);
-        favGifDiv.append('<br>');
-
-        $('.favourites-section').prepend(favGifDiv);
-      });
+      favAjaxCall(queryURL)
     }
   });
 }
