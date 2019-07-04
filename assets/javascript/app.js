@@ -21,22 +21,21 @@ var lastActorButtonCLicked = '';
 function storedFavouriteGiphys() {
   const favGiphyJSON = localStorage.getItem('favGiphys');
   if (favGiphyJSON !== null) {
-    favGiphy = JSON.parse(favGiphyJSON);
-    console.log(favGiphy);
-  }
+    favGiphys = JSON.parse(favGiphyJSON);
 
-  if (favGiphyJSON) {
-    for (var i = 0; i <= favGiphy.length; i++) {
-      var queryURL = `https://api.giphy.com/v1/gifs/${
-        favGiphy[i]
+  }
+  for (var i = 0; i <= favGiphys.length; i++) {
+    var queryURL = `https://api.giphy.com/v1/gifs/${
+        favGiphys[i]
       }?api_key=BkaUZZWcFij6J7AoQj3WtPb1R2p9O6V9`;
-      favAjaxCall(queryURL)
 
-    }
+    favAjaxCall(queryURL)
   }
+
 };
 
 function favAjaxCall(queryURL) {
+
 
   $.ajax({
     url: queryURL,
@@ -71,7 +70,8 @@ function favAjaxCall(queryURL) {
     $('.favourites-section').prepend(favGifDiv);
   });
 
-}
+
+};
 
 //initial call of the function to render the buttons on screen
 
@@ -248,6 +248,7 @@ function favouriteGiphy() {
     if (favGiphys.indexOf(giphyId) === -1) {
       favGiphys.push(giphyId);
     }
+
     for (var i = 0; i <= favGiphys.length; i++) {
       var queryURL = `https://api.giphy.com/v1/gifs/${
         favGiphys[i]
@@ -255,6 +256,7 @@ function favouriteGiphy() {
 
       favAjaxCall(queryURL)
     }
+
   });
 }
 
@@ -272,6 +274,7 @@ function changeState() {
   }
 }
 
+storedFavouriteGiphys();
 renderButtons();
 displayMoviesInfo();
 favouriteGiphy();
