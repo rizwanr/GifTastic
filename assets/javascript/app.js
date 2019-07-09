@@ -27,7 +27,7 @@ function storedFavouriteGiphys() {
   for (var i = 0; i <= favGiphys.length; i++) {
     var queryURL = `https://api.giphy.com/v1/gifs/${
         favGiphys[i]
-      }?api_key=[API_KEY]`;
+      }?api_key=BkaUZZWcFij6J7AoQj3WtPb1R2p9O6V9`;
 
     favAjaxCall(queryURL)
   }
@@ -148,7 +148,7 @@ function displayMoviesInfo() {
   $('.actor').on('click', function () {
     var movie = $(this).attr('data-name');
 
-    var queryURL = `https://api.themoviedb.org/3/search/movie?api_key=API_KEY&language=en-US&query=${movie}&page=1&include_adult=false&limit=1`;
+    var queryURL = `https://api.themoviedb.org/3/search/movie?api_key=ef99ccdee28605c6430d12d9af5feea6&language=en-US&query=${movie}&page=1&include_adult=false&limit=1`;
 
     $('#movies-view').empty();
     ajavMovieCall(queryURL)
@@ -189,13 +189,13 @@ function displayGiphyInfo() {
   var actor = $(this).attr('data-name');
 
   if ($('#actors-view').is(':empty') || actor !== lastActorButtonCLicked) {
-    var queryURL = `https://api.giphy.com/v1/gifs/search?q=${actor}&api_key=API_KEY`;
+    var queryURL = `https://api.giphy.com/v1/gifs/search?q=${actor}&api_key=BkaUZZWcFij6J7AoQj3WtPb1R2p9O6V9`;
 
     imd = true;
 
     giphyAjaxCall(queryURL, imd);
   } else {
-    var queryURL = `https://api.giphy.com/v1/gifs/search?q=${actor}&api_key=API_KEY&limit=10`;
+    var queryURL = `https://api.giphy.com/v1/gifs/search?q=${actor}&api_key=BkaUZZWcFij6J7AoQj3WtPb1R2p9O6V9&limit=10`;
     imd = false;
     giphyAjaxCall(queryURL, imd);
   }
@@ -252,7 +252,7 @@ function favouriteGiphy() {
     for (var i = 0; i <= favGiphys.length; i++) {
       var queryURL = `https://api.giphy.com/v1/gifs/${
         favGiphys[i]
-      }?api_key=API_KEY`;
+      }?api_key=BkaUZZWcFij6J7AoQj3WtPb1R2p9O6V9`;
 
       favAjaxCall(queryURL)
     }
